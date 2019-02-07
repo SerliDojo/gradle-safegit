@@ -1,0 +1,30 @@
+plugins {
+	id "java-gradle-plugin"
+	id "groovy"
+	id 'org.jetbrains.kotlin.jvm' version "1.3.21"
+	id "maven-publish"
+}
+
+group = groupId
+sourceCompatibility = '1.8'
+
+gradlePlugin {
+	plugins {
+		register("serliDojoHook") {
+			id = "com.serli.dojo.gradle-safegit"
+			implementationClass = "com.serli.dojo.gradle.safegit.GitHookPlugin"
+		}
+	}
+}
+
+repositories {
+	gradlePluginPortal()
+	jcenter()
+}
+
+dependencies {
+	compileOnly gradleApi()
+	implementation "org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}"
+
+	testCompileOnly gradleTestKit()
+}
