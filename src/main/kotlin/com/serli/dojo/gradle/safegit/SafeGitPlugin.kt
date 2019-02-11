@@ -3,36 +3,24 @@ package com.serli.dojo.gradle.safegit
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
+val taskGroup = "SafeGit Tasks"
+
 class GitHookPlugin : Plugin<Project> {
     override fun apply(project: Project) {
-        val installTask = project.tasks.register("installGitHooks", InstallGitHooksTask::class.java)
+        val installTask = project.tasks.register("installGitHooks", InstallGitHooksTask::class.java) {
+            it.group = taskGroup
+            it.description = "Install git hook scripts"
+        }
 
         project.tasks.named("build").configure {
             it.dependsOn(installTask)
         }
 
-        listOf(
-                "applypatch-msg",
-                "commit-msg",
-                "post-applypatch",
-                "post-checkout",
-                "post-commit",
-                "post-merge",
-                "post-receive",
-                "post-rewrite",
-                "post-update",
-                "pre-applypatch",
-                "pre-auto-gc",
-                "pre-commit",
-                "pre-push",
-                "pre-rebase",
-                "pre-receive",
-                "prepare-commit-msg",
-                "push-to-checkout",
-                "sendemail-validate",
-                "update"
-        ).forEach {
-            project.tasks.create(it)
+        HookNames.names.forEach { hookName ->
+            project.tasks.register(hookName) { task ->
+                task.group = taskGroup
+                task.description = "Task to depend on to enable $hookName hook"
+            }
         }
     }
 
