@@ -3,6 +3,18 @@ Plugin Gradle pour gérer les git hooks
 
 ## Usage
 
+### Releases
+
+Release are available on https://plugins.gradle.org/plugin/com.serli.dojo.gradle-safegit
+
+```groovy
+plugins {
+  id "com.serli.dojo.gradle-safegit" version "1.0.0"
+}
+```
+
+### Snapshots
+
 The plugin is available from jitpack : 
 https://jitpack.io/#SerliDojo/gradle-safegit
 
