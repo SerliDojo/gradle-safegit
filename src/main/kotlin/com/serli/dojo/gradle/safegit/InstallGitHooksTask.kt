@@ -2,20 +2,26 @@ package com.serli.dojo.gradle.safegit
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.OutputDirectory
-import org.gradle.api.tasks.TaskAction
+import org.gradle.api.Task
+import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.*
 import java.io.File
 
 open class InstallGitHooksTask : DefaultTask() {
 
     @Input
-    val hookNames = HookNames.names
+    val hookNames: ListProperty<String> = project.objects.listProperty(String::class.java)
+
+    @Input
+    val scriptContent: Property<String> = project.objects.property(String::class.java)
 
     @Internal
-    val dependedOnTasks = hookNames.map { name -> project.tasks.named(name) }
-            .filter{ task -> !task.get().dependsOn.isEmpty() }
+    val dependedOnTasks: Provider<List<TaskProvider<Task>>> = hookNames.map {
+        it.map { name -> project.tasks.named(name) }
+                .filter { task -> !task.get().dependsOn.isEmpty() }
+    }
 
     @OutputDirectory
     val hookDir: File = project.file("${project.projectDir}/.git/hooks")
@@ -32,12 +38,11 @@ open class InstallGitHooksTask : DefaultTask() {
             hookDir.mkdir()
         }
 
-        val hooks = dependedOnTasks
+        val hooks = dependedOnTasks.getOrElse(emptyList())
                 .map { task -> task.name }
                 .map { File(hookDir, it) }
 
-        val stream = this.javaClass.classLoader.getResourceAsStream("script-hook")
-        val script = stream.bufferedReader().use { it.readText() }
+        val script = scriptContent.get()
 
         hooks.forEach {
             it.writeText(script)
