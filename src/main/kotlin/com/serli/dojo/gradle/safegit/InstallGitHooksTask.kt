@@ -17,7 +17,7 @@ open class InstallGitHooksTask : DefaultTask() {
     @Input
     val scriptContent: Property<String> = project.objects.property(String::class.java)
 
-    @Internal
+    @Input
     val dependedOnTasks: Provider<List<TaskProvider<Task>>> = hookNames.map {
         it.map { name -> project.tasks.named(name) }
                 .filter { task -> !task.get().dependsOn.isEmpty() }
