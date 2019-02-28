@@ -4,7 +4,7 @@ import org.gradle.api.Project
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 
-class SafeGitExtension(project: Project) {
+open class SafeGitExtension(project: Project) {
     val script: Property<String> = project.objects.property(String::class.java)
             .also {
                 val stream = this.javaClass.classLoader.getResourceAsStream("script-hook")
