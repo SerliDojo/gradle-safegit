@@ -12,6 +12,9 @@ import java.io.File
 open class InstallGitHooksTask : DefaultTask() {
 
     @Input
+    val cleanHooks: Property<Boolean> = project.objects.property(Boolean::class.java)
+
+    @Input
     val hookNames: ListProperty<String> = project.objects.listProperty(String::class.java)
 
     @Input
@@ -32,6 +35,11 @@ open class InstallGitHooksTask : DefaultTask() {
         if (!hookDir.exists()) {
             project.logger.info("No hook directory found at ${hookDir.absolutePath}. A directory will be created ...")
             hookDir.mkdir()
+        }
+
+        if (cleanHooks.get()) {
+            project.logger.info("Cleaning previous git hook scripts")
+            hookDir.listFiles().forEach { it.delete() }
         }
 
         val hooks = hookNames.getOrElse(emptyList())

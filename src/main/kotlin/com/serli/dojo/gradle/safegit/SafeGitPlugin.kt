@@ -21,6 +21,7 @@ class GitHookPlugin : Plugin<Project> {
             it.group = taskGroup
             it.description = "Install git hook scripts"
 
+            it.cleanHooks.set(extension.cleanHooks)
             it.hookNames.set(extension.hookNames)
             it.scriptContent.set(extension.script)
         }
