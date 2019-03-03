@@ -13,5 +13,5 @@ open class SafeGitExtension(project: Project) {
             }
 
     val hookNames: ListProperty<String> = project.objects.listProperty(String::class.java)
-            .also { it.set(HookNames.names) }
+            .also { it.set(emptyList()) }
 }

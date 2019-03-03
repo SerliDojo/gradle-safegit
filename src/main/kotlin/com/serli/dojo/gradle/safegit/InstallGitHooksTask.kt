@@ -22,6 +22,8 @@ open class InstallGitHooksTask : DefaultTask() {
 
     @TaskAction
     fun install() {
+        project.logger.info("HookNames : ${hookNames.getOrElse(emptyList())}")
+
         val gitDir = project.file("${project.projectDir}/.git")
         if (!gitDir.exists()) {
             throw GradleException("No git directory found at ${gitDir.absolutePath}.")

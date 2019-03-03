@@ -10,8 +10,8 @@ class GitHookPlugin : Plugin<Project> {
         val extension = project.extensions.create("safegit", SafeGitExtension::class.java, project)
 
         // Register tasks before installGitHooks task to make sure they are available.
-        extension.hookNames.get().forEach { hookName ->
-            project.tasks.register(hookName) { task ->
+        HookNames.names.forEach { hookName ->
+            project.tasks.register(hookName, GitHookTask::class.java) { task ->
                 task.group = taskGroup
                 task.description = "Task to depend on to enable $hookName hook"
             }
@@ -23,6 +23,20 @@ class GitHookPlugin : Plugin<Project> {
 
             it.hookNames.set(extension.hookNames)
             it.scriptContent.set(extension.script)
+        }
+
+        project.afterEvaluate {p ->
+            if (extension.hookNames.get().isEmpty()) {
+                val hookNames = p.tasks.withType(GitHookTask::class.java)
+                        .filter { it.dependsOn.isNotEmpty() }
+                        .map { it.name }
+
+                extension.hookNames.set(hookNames)
+
+                p.tasks.withType(InstallGitHooksTask::class.java).configureEach {
+                    it.hookNames.set(hookNames)
+                }
+            }
         }
     }
 
