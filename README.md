@@ -1,5 +1,6 @@
 # gradle-safegit
-Plugin Gradle pour gérer les git hooks
+
+A Gradle plugin to handle git hooks within your gradle build.
 
 ## Usage
 
@@ -101,6 +102,21 @@ gitParams="\$*"
   hookNames = emptyList() // when the list is empty (which is the default), the plugin will select every tasks that are depended on as git hooks
 }
 ```
+
+### Install git hooks
+
+To install git hooks, you need to execute the task `installGitHooks`.
+If you want to automatically install the hooks, one way is to make a common task depend on `installGitHooks` :
+
+```sh
+tasks.named('build').configure {
+    it.dependsOn("installGitHooks")
+}
+```
+
+This way, whenever a developer build the project, it will install the git hooks. It's not bullet proof but that's the best way for now.
+
+Any idea to improve this are welcomed.
 
 ## Report an issue
 
