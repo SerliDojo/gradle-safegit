@@ -3,4 +3,4 @@
 hookName=`basename "\$0"`
 gitParams="\$*"
 
-./gradlew $hookName -Pparams="$gitParams" --quiet --console=plain
+./gradlew $hookName -Pparams="$gitParams" --console=plain
