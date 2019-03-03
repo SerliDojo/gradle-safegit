@@ -17,12 +17,6 @@ open class InstallGitHooksTask : DefaultTask() {
     @Input
     val scriptContent: Property<String> = project.objects.property(String::class.java)
 
-    @Input
-    val dependedOnTasks: Provider<List<TaskProvider<Task>>> = hookNames.map {
-        it.map { name -> project.tasks.named(name) }
-                .filter { task -> !task.get().dependsOn.isEmpty() }
-    }
-
     @OutputDirectory
     val hookDir: File = project.file("${project.projectDir}/.git/hooks")
 
@@ -38,8 +32,7 @@ open class InstallGitHooksTask : DefaultTask() {
             hookDir.mkdir()
         }
 
-        val hooks = dependedOnTasks.getOrElse(emptyList())
-                .map { task -> task.name }
+        val hooks = hookNames.getOrElse(emptyList())
                 .map { File(hookDir, it) }
 
         val script = scriptContent.get()
